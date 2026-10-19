@@ -1,0 +1,43 @@
+# Copy to config.yaml and tune for your footage.
+
+# -- Transcription --
+whisper_model: "medium.en"      # "small.en" is faster/less accurate, "large-v3" is slower/more accurate
+whisper_device: "cpu"           # "cuda" if you have an NVIDIA GPU
+whisper_compute_type: "int8"    # "float16" on GPU for speed
+
+# -- Motion analysis --
+motion_sample_fps: 3            # frames/sec to analyze (doesn't need to be full framerate)
+motion_resize: [320, 180]       # downscale frames before diffing, for speed
+static_camera_motion_threshold: 4.0   # below this mean frame-diff = "camera basically still" -> candidate to-camera shot
+active_work_motion_threshold: 8.0     # above this = "hands actively doing something"
+
+# -- Audio energy (reaction spikes) --
+reaction_zscore_threshold: 2.5  # how many std-devs above rolling mean RMS counts as a "spike"
+reaction_min_absolute_percentile: 60.0  # spike must ALSO be in the top (100-this)% loudest moments of the whole clip -
+                                          # prevents quiet background noise from registering as a "spike" just because
+                                          # it's louder than its immediate (very quiet) surroundings. Raise this
+                                          # (e.g. to 75-85) if quiet clips are still producing too many false reactions;
+                                          # set to 0 to disable and go back to pure local relative detection.
+reaction_pad_seconds: 1.5       # seconds of padding kept before/after a detected spike
+reaction_require_motion: true   # a loud audio spike only counts as a "reaction" if something is ALSO
+                                  # visibly moving on screen at that moment - filters out background/ambient
+                                  # noise, off-camera clangs, etc. with nothing actually happening in frame.
+                                  # set to false to go back to pure audio-only detection.
+reaction_min_motion_score: 4.0  # motion threshold used by the check above (same scale as
+                                  # static_camera_motion_threshold - raise if quiet-but-real reactions
+                                  # are getting filtered out, lower if background noise still slips through)
+
+# -- Dead air --
+dead_air_min_seconds: 4.0       # minimum length of a silent+still stretch to flag as cuttable dead air
+
+# -- Repeated action clustering --
+repeat_min_cluster_size: 3      # need at least this many similar bursts in a row to call it "repetitive"
+repeat_duration_tolerance: 0.4  # fractional tolerance when comparing burst durations (0.4 = within 40%)
+repeat_motion_tolerance: 0.35   # fractional tolerance when comparing burst avg motion energy
+
+# -- Segment stitching --
+min_keep_segment_seconds: 1.0   # drop keep-segments shorter than this (likely noise)
+pad_speech_seconds: 0.3         # small padding added around kept speech segments so words aren't clipped
+
+# -- Output --
+timeline_fps: 30
