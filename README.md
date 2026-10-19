@@ -1,6 +1,6 @@
 # Auto Rough-Cut Pipeline
 
-Automatically builds a rough-cut timeline from narrated repair / how-to footage (iPhone, GoPro, etc.) and exports it as an **EDL** and **FCPXML** you can import into **DaVinci Resolve** for the final edit.
+Automatically builds a rough-cut timeline from narrated repair / how-to footage (iPhone, GoPro, etc.) and exports it as an **EDL** and **FCPXML** you can import into **DaVinci Resolve** or **Premiere** for the final edit.
 
 It listens for speech, watches for motion, and detects loud reaction moments, then keeps the interesting parts and flags dead air and repetitive work as cut candidates. Nothing is deleted from your source files, and every keep/cut decision is written to an audit log so you can review it before trusting the timeline.
 
